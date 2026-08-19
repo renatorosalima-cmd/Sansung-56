@@ -1,66 +1,1170 @@
-<!doctype html>
-<html lang="pt-BR"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#000"><title>Cine Manual Web V1</title>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+
+<title>Cine Manual Web V2</title>
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;height:100%;overflow:hidden}
-#app{position:fixed;inset:0;background:#000}video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
-#ui{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
-.bar{pointer-events:auto;background:rgba(0,0,0,.55);padding:8px;display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap}
-button,select,input{font:inherit}button,select{background:#171717;color:#fff;border:1px solid #555;border-radius:8px;padding:8px 11px}
-button:disabled{opacity:.4}.rec{border-color:#b00000}.value{font-size:13px;min-width:60px;text-align:center}
-#zoom{width:180px}.guide{position:absolute;background:rgba(255,255,255,.35);pointer-events:none}
-.v1{left:33.333%;top:0;width:1px;height:100%}.v2{left:66.666%;top:0;width:1px;height:100%}
-.h1{top:33.333%;left:0;height:1px;width:100%}.h2{top:66.666%;left:0;height:1px;width:100%}
-#msg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;color:#ccc;max-width:90%;pointer-events:none}
-#recDot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#777;margin-right:5px}
-.recording #recDot{background:red;box-shadow:0 0 10px red}
-#timer{font-weight:bold;min-width:65px;text-align:center}.small{font-size:12px;color:#bbb}
-</style></head><body>
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+#app {
+    position: fixed;
+    inset: 0;
+    background: #000;
+}
+
+#preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+    transform-origin: center center;
+}
+
+/* Interface */
+
+#ui {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.bar {
+    pointer-events: auto;
+    background: rgba(0,0,0,.65);
+    padding: 7px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+button,
+select,
+input {
+    font-family: Arial, sans-serif;
+}
+
+button,
+select {
+    background: #151515;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 8px;
+    padding: 8px 10px;
+}
+
+button:active {
+    transform: scale(.96);
+}
+
+.rec {
+    border-color: #b00000;
+}
+
+.value {
+    font-size: 12px;
+    min-width: 65px;
+    text-align: center;
+}
+
+#zoom {
+    width: 155px;
+}
+
+/* Grade */
+
+.guide {
+    position: absolute;
+    background: rgba(255,255,255,.4);
+    pointer-events: none;
+}
+
+.v1 {
+    left: 33.333%;
+    top: 0;
+    width: 1px;
+    height: 100%;
+}
+
+.v2 {
+    left: 66.666%;
+    top: 0;
+    width: 1px;
+    height: 100%;
+}
+
+.h1 {
+    top: 33.333%;
+    left: 0;
+    height: 1px;
+    width: 100%;
+}
+
+.h2 {
+    top: 66.666%;
+    left: 0;
+    height: 1px;
+    width: 100%;
+}
+
+/* Barras cinematográficas */
+
+.letter {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    background: #000;
+    display: none;
+    pointer-events: none;
+}
+
+/* Mensagem central */
+
+#msg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+    color: #ddd;
+    max-width: 90%;
+}
+
+/* REC */
+
+#recDot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #777;
+    margin-right: 5px;
+}
+
+.recording #recDot {
+    background: red;
+    box-shadow: 0 0 10px red;
+}
+
+#timer {
+    font-weight: bold;
+    min-width: 65px;
+    text-align: center;
+}
+
+.small {
+    font-size: 11px;
+    color: #bbb;
+}
+
+#caps {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width:600px) {
+
+    button,
+    select {
+        padding: 7px 8px;
+        font-size: 12px;
+    }
+
+    .bar {
+        gap: 4px;
+    }
+
+    #zoom {
+        width: 120px;
+    }
+}
+</style>
+</head>
+
+<body>
+
 <div id="app">
-<video id="preview" autoplay playsinline muted></video>
-<div id="guides"><i class="guide v1"></i><i class="guide v2"></i><i class="guide h1"></i><i class="guide h2"></i></div>
-<div id="ui">
-<div class="bar">
-<button id="start">📷 Abrir câmera</button><button id="flip">🔄 Trocar</button>
-<select id="resolution"><option value="1920x1080">1080p</option><option value="1280x720">720p</option><option value="3840x2160">4K</option></select>
-<select id="fps"><option>24</option><option>30</option><option>60</option></select>
-<span class="value" id="zoomLabel">1.0×</span>
+
+    <!-- CÂMERA -->
+
+    <video id="preview"
+           autoplay
+           playsinline
+           muted></video>
+
+
+    <!-- GRADE -->
+
+    <div id="guides">
+
+        <i class="guide v1"></i>
+        <i class="guide v2"></i>
+
+        <i class="guide h1"></i>
+        <i class="guide h2"></i>
+
+    </div>
+
+
+    <!-- BARRAS CINEMATOGRÁFICAS -->
+
+    <i class="letter" id="topLetter"></i>
+    <i class="letter" id="bottomLetter"></i>
+
+
+    <!-- INTERFACE -->
+
+    <div id="ui">
+
+        <!-- PARTE SUPERIOR -->
+
+        <div class="bar">
+
+            <button id="start">
+                📷 Abrir
+            </button>
+
+            <button id="flip">
+                🔄 Câmera
+            </button>
+
+            <select id="resolution">
+
+                <option value="auto">
+                    Auto
+                </option>
+
+                <option value="1920x1080">
+                    1080p
+                </option>
+
+                <option value="1280x720">
+                    720p
+                </option>
+
+                <option value="3840x2160">
+                    4K
+                </option>
+
+            </select>
+
+
+            <select id="fps">
+
+                <option value="auto">
+                    FPS Auto
+                </option>
+
+                <option value="24">
+                    24 FPS
+                </option>
+
+                <option value="25">
+                    25 FPS
+                </option>
+
+                <option value="30">
+                    30 FPS
+                </option>
+
+                <option value="60">
+                    60 FPS
+                </option>
+
+            </select>
+
+
+            <select id="aspect">
+
+                <option value="off">
+                    Sem barras
+                </option>
+
+                <option value="2.39">
+                    Cinema 2.39:1
+                </option>
+
+                <option value="2.35">
+                    Cinema 2.35:1
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- PARTE INFERIOR -->
+
+        <div class="bar">
+
+            <button id="guidesBtn">
+                Grade ON
+            </button>
+
+
+            <input
+                id="zoom"
+                type="range"
+                min="1"
+                max="4"
+                step="0.1"
+                value="1"
+            >
+
+
+            <span
+                class="value"
+                id="zoomLabel">
+                1.0×
+            </span>
+
+
+            <button
+                id="record"
+                class="rec">
+
+                <span id="recDot"></span>
+
+                <span id="recText">
+                    REC
+                </span>
+
+            </button>
+
+
+            <span id="timer">
+                00:00
+            </span>
+
+        </div>
+
+
+        <!-- INFORMAÇÕES -->
+
+        <div class="bar">
+
+            <span
+                class="small"
+                id="caps">
+
+                Aguardando câmera
+
+            </span>
+
+
+            <span
+                class="small"
+                id="status">
+
+                —
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- MENSAGEM -->
+
+    <div id="msg">
+
+        Toque em
+        <b>“Abrir”</b>
+        para começar.
+
+    </div>
+
 </div>
-<div class="bar">
-<input id="zoom" type="range" min="1" max="4" step=".1" value="1">
-<button id="guidesBtn">Guias ON</button><button id="record" class="rec"><span id="recDot"></span><span id="recText">REC</span></button>
-<span id="timer">00:00</span><span class="small" id="status">Aguardando câmera</span>
-</div></div>
-<div id="msg">Toque em <b>“Abrir câmera”</b> para começar.</div>
-</div>
+
+
 <script>
-const v=document.getElementById('preview'),msg=document.getElementById('msg'),status=document.getElementById('status');
-let stream=null,recorder=null,chunks=[],facing='environment',recording=false,timerId=null,started=0;
-const setStatus=x=>status.textContent=x;
-const show=x=>{msg.innerHTML=x;msg.style.display=x?'block':'none'};
-function stopStream(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}}
-async function openCamera(){
- stopStream(); const [w,h]=resolution.value.split('x').map(Number),fps=Number(document.getElementById('fps').value);
- try{
-  stream=await navigator.mediaDevices.getUserMedia({audio:true,video:{facingMode:{ideal:facing},width:{ideal:w},height:{ideal:h},frameRate:{ideal:fps,max:fps}}});
-  v.srcObject=stream; await v.play(); const s=stream.getVideoTracks()[0].getSettings();
-  setStatus(`${s.width||'?'}×${s.height||'?'} • ${s.frameRate||'?'} fps`); show('');
- }catch(e){show('Não foi possível abrir a câmera.<br><small>Use HTTPS e permita o acesso à câmera.</small>');setStatus(e.name||'Erro')}
+
+/* ==============================
+   VARIÁVEIS
+================================ */
+
+const video =
+    document.getElementById("preview");
+
+const msg =
+    document.getElementById("msg");
+
+const statusEl =
+    document.getElementById("status");
+
+const capsEl =
+    document.getElementById("caps");
+
+
+let stream = null;
+
+let recorder = null;
+
+let chunks = [];
+
+let facing = "environment";
+
+let recording = false;
+
+let timerId = null;
+
+let started = 0;
+
+let capabilities = {};
+
+
+/* ==============================
+   FUNÇÕES BÁSICAS
+================================ */
+
+function setStatus(text) {
+
+    statusEl.textContent = text;
+
 }
-start.onclick=openCamera; flip.onclick=()=>{facing=facing==='environment'?'user':'environment';openCamera()};
-zoom.oninput=()=>{v.style.transform=`scale(${zoom.value})`;zoomLabel.textContent=Number(zoom.value).toFixed(1)+'×'};
-guidesBtn.onclick=()=>{let on=guides.style.display!=='none';guides.style.display=on?'none':'block';guidesBtn.textContent=on?'Guias OFF':'Guias ON'};
-function mime(){return ['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm'].find(x=>MediaRecorder.isTypeSupported(x))||''}
-record.onclick=()=>{if(!stream){show('Primeiro abra a câmera.');return} recording?stopRecording():startRecording()};
-function startRecording(){
- let m=mime(); if(!m){show('Formato de gravação não suportado neste navegador.');return}
- try{recorder=new MediaRecorder(stream,{mimeType:m,videoBitsPerSecond:20000000})}catch(e){recorder=new MediaRecorder(stream)}
- chunks=[];recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};recorder.onstop=save;recorder.start(1000);
- recording=true;document.body.classList.add('recording');recText.textContent='PARAR';started=Date.now();timer.textContent='00:00';
- timerId=setInterval(()=>{let s=Math.floor((Date.now()-started)/1000);timer.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},250);setStatus('Gravando…')
+
+
+function showMessage(text) {
+
+    msg.innerHTML = text;
+
+    msg.style.display =
+        text ? "block" : "none";
+
 }
-function stopRecording(){if(recorder&&recording)recorder.stop();recording=false;document.body.classList.remove('recording');recText.textContent='REC';clearInterval(timerId);setStatus('Processando…')}
-function save(){let type=recorder.mimeType||'video/webm',blob=new Blob(chunks,{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='CINE_'+new Date().toISOString().replace(/[:.]/g,'-')+'.'+(type.includes('mp4')?'mp4':'webm');a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);setStatus('Download iniciado')}
-window.addEventListener('beforeunload',stopStream);
-</script></body></html>
+
+
+function stopCamera() {
+
+    if (stream) {
+
+        stream
+            .getTracks()
+            .forEach(track => track.stop());
+
+        stream = null;
+
+    }
+
+}
+
+
+/* ==============================
+   ABRIR CÂMERA
+================================ */
+
+async function openCamera() {
+
+    stopCamera();
+
+    try {
+
+        const constraints = {
+
+            audio: true,
+
+            video: {
+
+                facingMode: {
+                    ideal: facing
+                }
+
+            }
+
+        };
+
+
+        /* RESOLUÇÃO */
+
+        const resolution =
+            document.getElementById("resolution").value;
+
+
+        if (resolution !== "auto") {
+
+            const parts =
+                resolution.split("x");
+
+            const width =
+                Number(parts[0]);
+
+            const height =
+                Number(parts[1]);
+
+
+            constraints.video.width = {
+                ideal: width
+            };
+
+            constraints.video.height = {
+                ideal: height
+            };
+
+        }
+
+
+        /* FPS */
+
+        const fps =
+            document.getElementById("fps").value;
+
+
+        if (fps !== "auto") {
+
+            const value =
+                Number(fps);
+
+            constraints.video.frameRate = {
+
+                ideal: value,
+
+                max: value
+
+            };
+
+        }
+
+
+        /* ABRIR */
+
+        stream =
+            await navigator.mediaDevices
+                .getUserMedia(constraints);
+
+
+        video.srcObject =
+            stream;
+
+
+        await video.play();
+
+
+        const track =
+            stream.getVideoTracks()[0];
+
+
+        const settings =
+            track.getSettings();
+
+
+        capabilities =
+            track.getCapabilities
+                ? track.getCapabilities()
+                : {};
+
+
+        /* MOSTRAR INFORMAÇÕES */
+
+        capsEl.textContent =
+            `${settings.width || "?"}×${settings.height || "?"} • ` +
+            `${settings.frameRate || "?"} fps • ` +
+            `${settings.facingMode || facing}`;
+
+
+        showMessage("");
+
+        setStatus(
+            "Câmera pronta"
+        );
+
+
+        /* ZOOM REAL SE EXISTIR */
+
+        if (capabilities.zoom) {
+
+            document.getElementById("zoom").min =
+                capabilities.zoom.min || 1;
+
+            document.getElementById("zoom").max =
+                Math.min(
+                    capabilities.zoom.max || 4,
+                    8
+                );
+
+            document.getElementById("zoom").step =
+                capabilities.zoom.step || 0.1;
+
+        }
+
+
+        applyZoom();
+
+        applyAspect();
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        showMessage(
+            "Não foi possível abrir a câmera.<br><br>" +
+            "<small>" +
+            "Verifique a permissão da câmera " +
+            "e se está usando HTTPS."
+            +
+            "</small>"
+        );
+
+
+        setStatus(
+            error.name || "Erro"
+        );
+
+    }
+
+}
+
+
+/* ==============================
+   ZOOM
+================================ */
+
+function applyZoom() {
+
+    const zoom =
+        Number(
+            document.getElementById("zoom").value
+        );
+
+
+    document.getElementById("zoomLabel")
+        .textContent =
+        zoom.toFixed(1) + "×";
+
+
+    /*
+       Mantém a proporção original.
+       O zoom é apenas ampliação.
+    */
+
+    video.style.transform =
+        `scale(${zoom})`;
+
+}
+
+
+document
+    .getElementById("zoom")
+    .addEventListener(
+        "input",
+        applyZoom
+    );
+
+
+/* ==============================
+   TROCAR CÂMERA
+================================ */
+
+document
+    .getElementById("flip")
+    .onclick = function() {
+
+        facing =
+            facing === "environment"
+                ? "user"
+                : "environment";
+
+        openCamera();
+
+    };
+
+
+/* ==============================
+   BOTÃO ABRIR
+================================ */
+
+document
+    .getElementById("start")
+    .onclick =
+    openCamera;
+
+
+/* ==============================
+   GRADE
+================================ */
+
+document
+    .getElementById("guidesBtn")
+    .onclick = function() {
+
+        const guides =
+            document.getElementById("guides");
+
+
+        const visible =
+            guides.style.display !== "none";
+
+
+        if (visible) {
+
+            guides.style.display =
+                "none";
+
+            this.textContent =
+                "Grade OFF";
+
+        }
+
+        else {
+
+            guides.style.display =
+                "block";
+
+            this.textContent =
+                "Grade ON";
+
+        }
+
+    };
+
+
+/* ==============================
+   BARRAS CINEMATOGRÁFICAS
+================================ */
+
+function applyAspect() {
+
+    const value =
+        document.getElementById("aspect").value;
+
+
+    const top =
+        document.getElementById("topLetter");
+
+    const bottom =
+        document.getElementById("bottomLetter");
+
+
+    if (value === "off") {
+
+        top.style.display =
+            "none";
+
+        bottom.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    const ratio =
+        Number(value);
+
+
+    const targetHeight =
+        window.innerWidth / ratio;
+
+
+    const bars =
+        Math.max(
+            0,
+            (window.innerHeight -
+            targetHeight) / 2
+        );
+
+
+    if (bars > 0) {
+
+        top.style.display =
+            "block";
+
+        bottom.style.display =
+            "block";
+
+
+        top.style.height =
+            bars + "px";
+
+        bottom.style.height =
+            bars + "px";
+
+
+        top.style.top =
+            "0";
+
+        bottom.style.bottom =
+            "0";
+
+    }
+
+    else {
+
+        top.style.display =
+            "none";
+
+        bottom.style.display =
+            "none";
+
+    }
+
+}
+
+
+document
+    .getElementById("aspect")
+    .addEventListener(
+        "change",
+        applyAspect
+    );
+
+
+window.addEventListener(
+    "resize",
+    applyAspect
+);
+
+
+/* ==============================
+   FORMATO DE GRAVAÇÃO
+================================ */
+
+function getRecordingMime() {
+
+    const formats = [
+
+        "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
+
+        "video/mp4",
+
+        "video/webm;codecs=vp9,opus",
+
+        "video/webm"
+
+    ];
+
+
+    return formats.find(
+        format =>
+            MediaRecorder
+                .isTypeSupported(format)
+    ) || "";
+
+}
+
+
+/* ==============================
+   COMEÇAR GRAVAÇÃO
+================================ */
+
+function startRecording() {
+
+    const mime =
+        getRecordingMime();
+
+
+    if (!mime) {
+
+        showMessage(
+            "Este navegador não oferece " +
+            "um formato de gravação compatível."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        recorder =
+            new MediaRecorder(
+
+                stream,
+
+                {
+
+                    mimeType: mime,
+
+                    videoBitsPerSecond:
+                        20000000
+
+                }
+
+            );
+
+    }
+
+    catch(error) {
+
+        recorder =
+            new MediaRecorder(stream);
+
+    }
+
+
+    chunks = [];
+
+
+    recorder.ondataavailable =
+        function(event) {
+
+            if (event.data.size) {
+
+                chunks.push(
+                    event.data
+                );
+
+            }
+
+        };
+
+
+    recorder.onstop =
+        saveRecording;
+
+
+    recorder.start(1000);
+
+
+    recording = true;
+
+
+    document.body
+        .classList
+        .add("recording");
+
+
+    document.getElementById("recText")
+        .textContent =
+        "PARAR";
+
+
+    started =
+        Date.now();
+
+
+    timerId =
+        setInterval(
+            updateTimer,
+            250
+        );
+
+
+    setStatus(
+        "Gravando…"
+    );
+
+}
+
+
+/* ==============================
+   CRONÔMETRO
+================================ */
+
+function updateTimer() {
+
+    const seconds =
+        Math.floor(
+            (Date.now() -
+            started) / 1000
+        );
+
+
+    const minutes =
+        Math.floor(
+            seconds / 60
+        );
+
+
+    const sec =
+        seconds % 60;
+
+
+    document.getElementById("timer")
+        .textContent =
+
+        String(minutes)
+            .padStart(2,"0")
+
+        + ":" +
+
+        String(sec)
+            .padStart(2,"0");
+
+}
+
+
+/* ==============================
+   PARAR
+================================ */
+
+function stopRecording() {
+
+    if (
+        recorder &&
+        recording
+    ) {
+
+        recorder.stop();
+
+    }
+
+
+    recording = false;
+
+
+    document.body
+        .classList
+        .remove("recording");
+
+
+    document.getElementById("recText")
+        .textContent =
+        "REC";
+
+
+    clearInterval(
+        timerId
+    );
+
+
+    setStatus(
+        "Processando vídeo…"
+    );
+
+}
+
+
+/* ==============================
+   SALVAR
+================================ */
+
+function saveRecording() {
+
+    const type =
+        recorder.mimeType ||
+        "video/webm";
+
+
+    const blob =
+        new Blob(
+            chunks,
+            {
+                type: type
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement("a");
+
+
+    link.href =
+        url;
+
+
+    const extension =
+        type.includes("mp4")
+            ? "mp4"
+            : "webm";
+
+
+    link.download =
+        "CINE_" +
+        new Date()
+            .toISOString()
+            .replace(
+                /[:.]/g,
+                "-"
+            )
+        +
+        "." +
+        extension;
+
+
+    link.click();
+
+
+    setTimeout(
+        () =>
+            URL.revokeObjectURL(url),
+        3000
+    );
+
+
+    setStatus(
+        "Download iniciado"
+    );
+
+}
+
+
+/* ==============================
+   BOTÃO REC
+================================ */
+
+document
+    .getElementById("record")
+    .onclick =
+    function() {
+
+        if (!stream) {
+
+            showMessage(
+                "Primeiro abra a câmera."
+            );
+
+            return;
+
+        }
+
+
+        if (recording) {
+
+            stopRecording();
+
+        }
+
+        else {
+
+            startRecording();
+
+        }
+
+    };
+
+
+/* ==============================
+   INICIALIZAÇÃO
+================================ */
+
+applyAspect();
+
+</script>
+
+</body>
+</html>
